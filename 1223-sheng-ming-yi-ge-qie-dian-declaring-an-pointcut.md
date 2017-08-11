@@ -55,8 +55,6 @@ Spring AOP 支持下面的AspectJ pointcut designators\(PCD\)在切点表达式�
 
 ......
 
-
-
 ## 组合切点表达式
 
 切点表达式可以使用"&&", "\|\|", "!"结合 ，也支持通过名字来引用切点表达式。下面的例子展示了三个切点表达式：**anyPublicOperation**\(一个执行方法连接点代表任何public 方法的执行\)；**inTrading**\(匹配执行的方法是否在trading模块下\);**tradingOperation**\(匹配如如果一个执行方法代表一个公开的方法并且在trading模块下\)
@@ -74,23 +72,44 @@ private void tradingOperation(){}
 
 最好的做法是构建更加复杂的切点表达式通过较小的组件命名上。当通过名字来引用切点时，java的正常的可见性适用于此（你可以在相同的类型里看见私有的切点，保护的切点从继承中，在任何地点看见公开的切点）。可见性不会影响切点的匹配
 
-
-
 ## 分享常用的切点定义
 
 ```java
 @Aspect
 public class SystemArchitecture{
+    //在web或其子包
     @Pointcut("within(com.xyz.someapp.web..*)")
     public void inWebLayer(){}
-    
+    //在service层或其子包
     @Pointcut("within(com.xyz.someapp.service..*)")
     public void inServiceLayer(){}
     
+    //在dao层或其子包
+    @Pointcut("within(com.xyz.someapp.dao..*)")
+    public void inDataAccessLayer(){}
+
     @Pointcut("execution(* com.xyz.someapp..service.*.*(..))")
     public void businessService(){}
-    
+
     @Pointcut("execution(* com.xyz.someapp.dao.*.*(..)")
+    public void dataAccessOperation(){}
+}
+```
+
+像上面在切面中定义的切点可以在任何地主引用如果你需要一个切点表达式。例如，使service层具有事务，你可以这样做
+
+```xml
+<aop:config>
+    <aop:advisor
+        pointcut="com.xyz.someapp.SystemArchitecture.businessService()"
+        advice-ref="tx-advice"/>
+</aop:config>
+
+<tx:advice id="tx-advice">
+    <tx:attributes>
+        <tx:method name="*" propagation="REQUIRED"/>
+    </tx:attributes>
+</tx:advice>
 ```
 
 
