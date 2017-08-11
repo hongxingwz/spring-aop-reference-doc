@@ -83,7 +83,7 @@ public class SystemArchitecture{
     //在service层或其子包
     @Pointcut("within(com.xyz.someapp.service..*)")
     public void inServiceLayer(){}
-    
+
     //在dao层或其子包
     @Pointcut("within(com.xyz.someapp.dao..*)")
     public void inDataAccessLayer(){}
@@ -111,6 +111,133 @@ public class SystemArchitecture{
     </tx:attributes>
 </tx:advice>
 ```
+
+## 示例
+
+Spring AOP的用户会最常使用execution 切点提示符。execution表达的格式如下
+
+```
+execution(modifiers-pattern? ret-type-pattern 
+                declaring-type-pattern?name-pattern(param-pattern)throws-pattern?)
+```
+
+所有的部分除了**returing type pattern**\(上面片断中的ret-type-pattern\), **name pattern, **和**parameters pattern**是可选的。
+
+**返回类型模式**决定了要匹配的连接点的方法的返回类型必须是什么。大多数情况下你将会使用**\***作为返回值模式，其匹配所有类型的返回值。**全限定类型名**将会匹配仅当方法返回指定的类型时。
+
+你可以使用\*通配符作为**名字模式**的全部或部分
+
+* 执行的任何公开方法：
+
+```
+execution(public * *(..))
+```
+
+* 执行的任何以set开头的方法：
+
+```
+execution(* set*(..))
+```
+
+* 执行的任何在AccountService接口中定义的方法：
+
+```
+execution(* com.xyz.service.AccountService.*(..))
+```
+
+* 执行的任何在service包中定义的方法
+
+```
+execution(* com.xyz.service.*.*(..))
+```
+
+* 执行的任何在service或其子包中的方法
+
+```
+execution(* com.xyz.service..*.*(..))
+```
+
+* 任何在service包中的连接点
+
+```
+within(com.xyz.service.*)
+```
+
+* 任何在service包或其子包中的连接点
+
+```
+within(com.xyz.service..*)
+```
+
+* 任何连接点其代理类实现了**AccountService**接口
+
+```
+this(com.xyz.service.AccountService)
+```
+
+> 注：‘this’常常用在绑定形式上
+
+* 任何连接点其目标对象实现了**AccountService**接口
+
+```
+target(com.xyz.service.AccountService)
+```
+
+> 注：'target'常常用在绑定形式上
+
+* 任何连接点具有一个参数，其参数在运行时传入的是**Serializable**
+
+```
+args(java.io.Serializable)
+```
+
+> 注：此例子与execution\(\* \*\(java.io.Serializable\)的不同是：args版本匹配运行时传递进来的参数是Serializable, execution版本匹配如果方法签名声明仅一个参数且参数类型是Serializable.
+
+> 注：'args'常常用在绑定形式上
+
+* 任何连接点其目标对象具有一个@Transactional注解：
+
+```
+@target(org.springframework.transaction.annotation.Transactional)
+```
+
+* 任何连接点其目标对象的声明类型具有@Transactional注解:
+
+```
+@within(org.springframework.transaction.annotation.Transactional)
+```
+
+* 任何连接点具有一个参数，运行时传递进来的参数具有@Classified注解
+
+```
+@args(com.xyz.security.Classified)
+```
+
+* 任何连接点 On a Spring bean named tradeService:
+
+```
+bean(tradeService)
+```
+
+```
+bean(*Service)
+```
+
+## 写更好的切点
+
+在编辑期间，AspectJ处理pointcusts致力于提高和优化匹配的性能
+
+
+
+......
+
+
+
+## 声明通知
+
+通知与切点表达式相关联，在通过切点匹配到的执行方法之前，之后，或环绕执行。切换表达式既可以是简单的命名的切点引用，或是一个切点表达式
+
+
 
 
 
