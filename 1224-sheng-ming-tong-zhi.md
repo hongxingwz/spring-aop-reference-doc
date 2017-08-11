@@ -110,5 +110,40 @@ public class AfterFinallyExample{
 
 最后一种通知是环绕通知。Around advice runs "around" 匹配到的执行方法。It has the opportunity to do work both before and after the mthod executes, and to determine when, how and even if, the method actually gets to execute at all. Around advice is often used if you nned to share state before and after a method execution in a thread-safe manner\(starting and stopping a timer for example\).Always use the least powerful form of advice that meets your requirements\(i.e. don't use around advice if simple before advice would do\).
 
+环绕通知使用@Around注解声明，环绕方法的第一个参数一定要是**ProceedingJoinPoint**类型。在环绕体内，调用**ProceedingJoinPoint**类的**proceed\(\)方法**将会使下面的方法执行。proceed方法调用时也可以传入**Object\[\] **- 数组内的值将会被用来作为参数传递给执行的方法当该方法被继续执行时
+
+> 当用Object\[\]继续调用方法时的行为与AspectJ编译的环绕通知的行为不一点不样。用传统的AspectJ 语言写的环绕通知，传递给继续处理的方法的参数的数量一定要匹配  ......
+
+
+
+```
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.ProceedingjoinPoint;
+
+@Aspect
+public class AroundExample{
+    
+    @Around("com.xyz.myapp.SystemArchitecture.businessService()")
+    public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable{
+        Object retVal = pjp.proceed();
+        
+        return retVal;
+    }
+}
+```
+
+环绕通知返回的值将被返回给拦截的方法既而调用者可以看到。一个简单的缓存切面像例子可以从缓存中返回值如果其有一个的话，如果其没有缓存值的话调用proceed\(\)就可以了，注意此proceed可以调用一次，许多次，或者跟本不调用在环绕的体内，这些都是相当合法的。
+
+## 通知参数
+
+Spring提供完全的类型通知 - 意味着你声明你需要的参数在通知签名中（像上面我们看到的returing 和 throwing例子）而不是一直用与Object\[\]一起工作。我们稍后将会看到怎样使参数和其他上下文值在通知体内可用。首先让我们看一看怎样写一个通用的通知可以找出通知方法目前正在通知的方法。
+
+
+
+## 访问目前的连接点
+
+任何通知方法都可以声明其第一个参数，一个org.aspectj.lang.JoinPoint类型的参数（请注意环绕通知的需要声明第一个参数的类型为ProceedingJoinPoint,其是JoinPoint的一个子类。JoinPoint接口提供了许多有用的方法例如**getArgs\(\)**\(返回方法的参数），**getThis\(\)**\(返回代理对象\)，**getTarget\(\)**\(返回目标对象\)，**getSignature\(\)**\(返回一个将被通知的方法的描述\) 和 **toString\(\)**\(打印将被通知方法有用的描述\)。请查阅javadocs来看来全部的细节。
+
 
 
