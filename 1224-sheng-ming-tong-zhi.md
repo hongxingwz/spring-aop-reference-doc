@@ -167,7 +167,56 @@ public void validateAccount(Account account){
 
 感兴趣的读者可以读AspectJ编程指导获取得多的细节
 
-代理对象\(**this**\), 目标对象\(**target**\) ,和注解\(@within, @target, @annotation, @args\)
+代理对象\(**this**\), 目标对象\(**target**\) ,和注解\(@within, @target, @annotation, @args\)都可以类似的方式绑定。下面的例子展示了怎样匹配到一个被标注了@Auditable注解的执行方法，并提取value值。
 
+首先定义一个@Auditable注解：
 
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Auditable{
+    String value();
+}
+```
+
+然后通知配置标注了@Auditable方法的执行方法
+
+```java
+@Before("com.xyz.lib.Pointcuts.anyPublicMethod() && @annotation(auditable)")
+public void audit(Auditable auditable){
+    String name = auditable.value();
+    // ....
+}
+```
+
+## 通知参数和泛型
+
+Spring AOP 可以处理类定义和方法参数中的泛型，假设你有一个像下面的泛型类：
+
+```java
+public interface Sample<T>{
+    void sampleGenericMethod(T param);
+    
+    void sampleGenericCollectionMethod(Collection<T> param);
+}
+```
+
+你可以限制拦截方法类型包含必须的参数类型通过简单的输入通知参数--你想要拦截的方法：
+
+```java
+@Before("execution(* ..Sample+.sampleGenericMethod(*)) && args(param)")
+public void beforeSampleMethod(MyType param){
+}
+```
+
+此通知向我们上面讨论的一样工作。然而，其不与泛型集合一起工作，因此你不能定义像下面这样的切点：
+
+```
+@Before("execution(* ..Sample+.sampleGenericCollectionMethod(*)) && args(param)")
+public void beforeSampleMethod(Collection<MyType> param){
+
+}
+```
+
+为了使其工作我们可能将会拦截所有类型的集合，这是不合理的我们也不能决定怎么处理null值。为了达到此目的你需要类型参数Collection&lt;?&gt;并且手动的检查元素的类型
 
