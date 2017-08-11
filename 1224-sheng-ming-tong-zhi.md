@@ -141,8 +141,6 @@ Spring提供完全的类型通知 - 意味着你声明你需要的参数在通�
 
 任何通知方法都可以声明其第一个参数，一个org.aspectj.lang.JoinPoint类型的参数（请注意环绕通知的需要声明第一个参数的类型为ProceedingJoinPoint,其是JoinPoint的一个子类。JoinPoint接口提供了许多有用的方法例如**getArgs\(\)**\(返回方法的参数），**getThis\(\)**\(返回代理对象\)，**getTarget\(\)**\(返回目标对象\)，**getSignature\(\)**\(返回一个将被通知的方法的描述\) 和 **toString\(\)**\(打印将被通知方法有用的描述\)。请查阅javadocs来看来全部的细节。
 
-
-
 ## 传递参数给通知
 
 我们已经看到怎么绑定返回值或异常值\(使用after returing 和after throwing通知\)。使参数值对于通知体可用，你可以使用绑定args的绑定形式。如果一个参数名在args的表达式中使用，然后相关联的参数将被传递当通知被调用时。一个例子将会使你清楚。假设你想通知dao操作\(以Account作为其第一个参数\)的执行，然后你需要访问account在通知体内。你可以像下面这样写：
@@ -153,6 +151,23 @@ public void validateAccount(Account account){
     // ...
 }
 ```
+
+**args\(account, ..\)**的表达式部分服务于两个目的：首先，他限制了匹配至少肯有一个参数的执行的方法，并且传递进的参数是**Account**的实例；第二：他使真实现的Account对象作为account参数在通知体内可用。
+
+另一种方式是声明一个切点提供Account对象值当匹配连接点，然后从通知中引用此命名的切点，这将看起来像下面这样：
+
+```java
+@Pointcut("com.xyz.myapp.SystemArchitecture.dataAccessOperation() && args(account,..)")
+private void accountDataAccessOperation(Account account){}
+
+@Before("accountDataAccessOperation(account)
+public void validateAccount(Account account){
+}
+```
+
+感兴趣的读者可以读AspectJ编程指导获取得多的细节
+
+代理对象\(**this**\), 目标对象\(**target**\) ,和注解\(@within, @target, @annotation, @args\)
 
 
 
