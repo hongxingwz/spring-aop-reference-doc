@@ -192,7 +192,7 @@ args(java.io.Serializable)
 ```
 
 > 注：此例子与execution\(\* \*\(java.io.Serializable\)的不同是：args版本匹配运行时传递进来的参数是Serializable, execution版本匹配如果方法签名声明仅一个参数且参数类型是Serializable.
-
+>
 > 注：'args'常常用在绑定形式上
 
 * 任何连接点其目标对象具有一个@Transactional注解：
@@ -227,17 +227,9 @@ bean(*Service)
 
 在编辑期间，AspectJ处理pointcusts致力于提高和优化匹配的性能
 
-
-
 ......
 
-
-
-## 声明通知
-
-通知与切点表达式相关联，在通过切点匹配到的执行方法之前，之后，或环绕执行。切换表达式既可以是简单的命名的切点引用，或是一个切点表达式
-
-
+## 
 
 
 
