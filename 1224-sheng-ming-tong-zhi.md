@@ -71,8 +71,6 @@ public class AfterReturingExample{
 
 请注意当使用after-returing通知时不可能返回完全不同的引用
 
-
-
 ## 抛出异常通知\(After throwing advice\)
 
 当一个匹配的方法执行并通过抛出一个异常退出，此通知会执行。其通过使用@AfterThrowing注解声明
@@ -92,8 +90,6 @@ public class AfterThrowingExample{
 
 在throwing终即用的名字一定要与通知方法中的名字相关联。当一个方法执行并通过抛出异常退出时，此异常将会被传递进通知方法相关的参数。throwing也对类型有限制，如果异常不匹配，则通知不会执行。
 
-
-
 ## After\(finally\) advice
 
 After\(finally\)通知会运行无论匹配的方法怎样执行并退出。他通过@After注解声明。After通知必须作好对正常退出和异常返回情况的准备。其通常用来释放资源
@@ -110,7 +106,9 @@ public class AfterFinallyExample{
 }
 ```
 
+## Around advice
 
+最后一种通知是环绕通知。Around advice runs "around" 匹配到的执行方法。It has the opportunity to do work both before and after the mthod executes, and to determine when, how and even if, the method actually gets to execute at all. Around advice is often used if you nned to share state before and after a method execution in a thread-safe manner\(starting and stopping a timer for example\).Always use the least powerful form of advice that meets your requirements\(i.e. don't use around advice if simple before advice would do\).
 
 
 
