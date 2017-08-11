@@ -47,7 +47,9 @@ public class MessageService {
 }
 ```
 
-**com2.aspect.NotVeryUsefulAspect**
+**com2.aspect.NotVeryUsefulAspect 定义一个切面**
+
+> 注：**@Aspect**注解只是简单的将class声明为一个切面，不具有@Component的功能。所以要**加上@Component**才能被Spring应用上下文扫描
 
 ```
 package com2.aspect;
@@ -85,5 +87,24 @@ public class NotVeryUsefulAspect {
 }
 ```
 
+**com2.config 定义一个配置类**
 
+> 注：@EnableAspectJAutoProxy这个注解是必须的，启动自动代理
+
+```
+package com2.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+@Configuration
+@ComponentScan(basePackages = {"com2"})
+@EnableAspectJAutoProxy
+public class AppConfig {
+}
+
+```
+
+这样当在注入MessageService，并调用transfer\(\), 会进行拦截并执行相应的环绕方法
 
