@@ -121,11 +121,13 @@ execution(modifiers-pattern? ret-type-pattern
                 declaring-type-pattern?name-pattern(param-pattern)throws-pattern?)
 ```
 
-所有的部分除了**returing type pattern**\(上面片断中的ret-type-pattern\), **name pattern, **和**parameters pattern**是可选的。
+所有的部分除了**returing type pattern**\(上面片断中的ret-type-pattern\), **name pattern, **和**parameters pattern**其余都是可选的。
 
 **返回类型模式**决定了要匹配的连接点的方法的返回类型必须是什么。大多数情况下你将会使用**\***作为返回值模式，其匹配所有类型的返回值。**全限定类型名**将会匹配仅当方法返回指定的类型时。
 
 你可以使用\*通配符作为**名字模式**的全部或部分
+
+> 总结： modifiers-pattern 要么只定为public default private protected 要么省略掉。不能设置为通配符\*
 
 * 执行的任何公开方法：
 
