@@ -196,7 +196,7 @@ Spring AOP 可以处理类定义和方法参数中的泛型，假设你有一个
 ```java
 public interface Sample<T>{
     void sampleGenericMethod(T param);
-    
+
     void sampleGenericCollectionMethod(Collection<T> param);
 }
 ```
@@ -219,4 +219,63 @@ public void beforeSampleMethod(Collection<MyType> param){
 ```
 
 为了使其工作我们可能将会拦截所有类型的集合，这是不合理的我们也不能决定怎么处理null值。为了达到此目的你需要类型参数Collection&lt;?&gt;并且手动的检查元素的类型
+
+## 决定参数的名字
+
+绑定在调用通知的参数依赖于使用在切点表达式声明的参数名。参数名在经过Java返射之后是不可用的， 因此Spring AOP使用下面的策略来决定参数的名字：
+
+* 如果参数名已经被用户显式的指定，然后就使用指定的参数：所有的通知和切点注解都有一个可选的“argNames”属性 - 可以使用指定被标注方法的参数名 - 这些参数在运行时也是可用的。 例如：
+
+```java
+@Before(value="com.xyz.lib.Pointcuts.anyPublicMethod() && target(bean) && @annotation(auditable)",
+        argNames="bean, auditable")
+public void audit(Object bean, Auditable auditable){
+        AuditCode code = auditable.value();
+        // ...use code and bean
+}
+```
+
+如果第一个参数是**JoinPoinit**, **PreceedingJoinPoinit**, 或者是 **JoinPoint.StaticPart**类型，你可以离开“argNames"属性指定的参数名。例如，如更改后续的通知来接收连接点对象，”argNames"属性不需要包括它：
+
+```java
+@Before(value="com.xyz.lib.Pointcuts.anyPublicMethod() && target(bean) && @annotation(auditable)",
+        argNames="bean, auditable")
+public void audit(JoinPoint jp, Object bean, Auditable auditable){
+        AuditCode code = auditable.value();
+        // ... use code, bean, and jp
+}
+```
+
+对于指定的第一个参数类型是JoinPoint, ProceedingJoinPoint, 和JoinPoint.StaticPart类型会被特别转换为通知而不需要收集另外其他的连接点上下文。在这种情况下，你可以删除“argNames"属性。例如，下面的通知不需要声明”argNames"属性：
+
+```java
+@Before("com.xyz.lib.Pointcuts.anyPublicMethod()")
+public void audit(JoinPoint jp){
+    // ... use jp
+}
+```
+
+* 使用**“argNames”**有点不美观，因此如果**“argNames”**属性没有被指定，Spring AOP会寻找class的debug信息然后从本地变量表决定参数的名字。此信息会出现只要类在编译时具有debug信息（“-g:vars" at a minimum）。使用此参数编译的后续影响是：\(1\)你的代码会容易理解（reverse engineer\), \(2\)类文件会稍微变大一点\(通常无关紧要\)，\(3\)移除没有使用的变量的优化将不会适用于你的编译，换句话说，你使用经参数时不会遇到任何的不同。
+
+> 如果@AspectJ切面被AspectJ compile\(ajc\)编译及使没有debug信息，也不用添加argNames属性，编译器会保留需要的信息
+
+* 如果代码被编译后没有需要的debug信息，Spring AOP将尝试推断绑定变量到参数（例如，如果仅有一个参数在切点表达式，通知方法也只有一个参数，那么对应的信息很明显！）。如果指定的信息区分不出绑定的变量，然后**AmbiguousBindingException**异常将会抛出。
+* 如果上面的策略都失败了IllegalArgumentException将会抛出
+
+## 后续处理时带有参数
+
+我们在早前掉到过，我们将介绍怎么写一个后续处理的调用\(with arguments\)在Spring AOP 和 AspectJ中都工作。解决方法是仅确保通知签名按顺序绑定方法参数。例如：
+
+```java
+@Around(execution(List<Account> find*(..)) && " +
+    "com.xyz.myapp.SystemArchitecture.inDataAccessLayer() && " +
+    "args(accountHolderNamePattern)")
+public Object preProcessQueryPattern(ProceedingJoinPoint pjp, String accountHolderNamePattern) throws Throwable{
+    String newPattern = preProcess(accountHolderNamePattern);
+    
+    return pjp.proceed(new Object[]{newPattern});
+}
+```
+
+在多数情况下你将可以保留任何东西（像上面的例子）
 
