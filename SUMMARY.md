@@ -8,4 +8,5 @@
 * [12.2.4 声明通知](1224-sheng-ming-tong-zhi.md)
 * [笔-11.2 一个比较完整的配置 ](7b14-11-2-yi-ge-bi-jiao-wan-zheng-de-pei-zhi.md)
 * [11.1.1 AOP概念\(AOP concepts\)](1111-aopgai-5ff528-aop-concepts.md)
+* [11.1.3 AOP Proxies \(AOP 代理\)](1113-aop-proxies.md)
 
