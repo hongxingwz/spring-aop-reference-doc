@@ -7,7 +7,8 @@
 * [11.2 @AspectJ support\(@AspectJ 支持\)](112-aspectj-supportaspectj-zhi-630129.md)
 * [11.2.1 Enabling @AspectJ Support](1121-enabling-aspectj-support.md)
 * [11.2.2 声明切面\(Declaring an aspect\)](1122-sheng-ming-qie-976228-declaring-an-aspect.md)
-* [12.2.3 声明一个切点 \(Declaring an pointcut\)](1223-sheng-ming-yi-ge-qie-dian-declaring-an-pointcut.md)
-* [12.2.4 声明通知](1224-sheng-ming-tong-zhi.md)
+* [11.2.3 声明一个切点 \(Declaring an pointcut\)](1223-sheng-ming-yi-ge-qie-dian-declaring-an-pointcut.md)
+* [11.2.4 声明通知](1224-sheng-ming-tong-zhi.md)
 * 11.2 @AspectJ support\(@AspectJ 支持\)
+* [11.6代理机制\(Proxying mechanisms\)](116dai-li-ji-523628-proxying-mechanisms.md)
 
