@@ -11,4 +11,5 @@
 * [11.2.4 声明通知](1224-sheng-ming-tong-zhi.md)
 * 11.2 @AspectJ support\(@AspectJ 支持\)
 * [11.6代理机制\(Proxying mechanisms\)](116dai-li-ji-523628-proxying-mechanisms.md)
+* [11.6.1理解AOP代理\(Understanding AOP 代理\)](1161li-jie-aop-dai-740628-understanding-aop-dai-740629.md)
 
