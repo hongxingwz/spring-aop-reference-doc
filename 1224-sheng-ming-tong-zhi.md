@@ -272,10 +272,18 @@ public void audit(JoinPoint jp){
     "args(accountHolderNamePattern)")
 public Object preProcessQueryPattern(ProceedingJoinPoint pjp, String accountHolderNamePattern) throws Throwable{
     String newPattern = preProcess(accountHolderNamePattern);
-    
+
     return pjp.proceed(new Object[]{newPattern});
 }
 ```
 
 在多数情况下你将可以保留任何东西（像上面的例子）
+
+## 通知的排序
+
+在多个通知都想在同一个连接点上运行将会发生什么？Spring AOP 像 AspectJ一样遵守优先级规则决定通知执行顺序。高优先级的通知第一个运行”on the way is“（因此两条before通知，具有最高优先级的会先运行），”On the way out“从一个连接点，最高优先级的通知最后一个运行（因此给定两个after通知，具有最高优先级的通知将会最第二个运行）。
+
+当两个通知在不同的切面中定义都需要在同一个连接点上运行 ，除非你指定了运行顺序，否则运行顺序是没有定义的。你可以管理执行顺序通过指定优先级的顺序。可以通过正常的Spring方式指定：\(1\)切面类实现org.springframework.core.Ordered接口或\(2\)在切面类上标注Order注解。指定两个切面，从Ordered.getValue\(\)返回较小值\(或从annotation值\)中返回较小值的切面具有较高的优先级。
+
+当两个在同一个切面中定义的通知要在同一个切点上运行地，顺序是未定义的（因为没有方式从编译好的类中通过返射提取order声明）。考虑将这样的通知方法放进同一个通知中，或都将样的通知放进两个切面中定义 -这样就可以在切面级别指定顺序
 
